@@ -6,3 +6,9 @@ runs/
 *.pt
 *.mp4
 *.avi
+Pictures/
+videos/
+runs/
+.venv/
+__pycache__/
+*.pt
