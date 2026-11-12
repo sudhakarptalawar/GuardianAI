@@ -1,3 +1,4 @@
+from datetime import datetime
 from ultralytics import YOLO
 
 model = YOLO("yolov8n.pt")
@@ -15,13 +16,20 @@ for result in results:
         obj = result.names[cls]
 
         if obj == "person":
-            events.add("Person Detected")
+            events.add(
+    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Person Detected"
+)
+
 
         elif obj == "dog":
-            events.add("Dog Detected")
+            events.add(
+    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Dog Detected"
+)
 
         elif obj == "car":
-            events.add("Vehicle Detected")
+            events.add(
+    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Vehicle Detected"
+)
 
 print("\nGUARDIANAI REPORT\n")
 print("=" * 30)
@@ -32,3 +40,17 @@ for event in events:
 print("\nSUMMARY")
 print("=" * 30)
 print(f"Total Events: {len(events)}")
+with open("report.txt", "w") as file:
+
+    file.write("GUARDIANAI REPORT\n")
+    file.write("=" * 30 + "\n")
+
+    for event in events:
+        file.write(event + "\n")
+
+    file.write("\nSUMMARY\n")
+    file.write("=" * 30 + "\n")
+
+    file.write(f"Total Events: {len(events)}")
+
+print("\nReport saved as report.txt")

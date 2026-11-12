@@ -1,0 +1,9 @@
+GUARDIANAI REPORT
+==============================
+2026-11-12 13:55:11 - Dog Detected
+2026-11-12 13:55:11 - Person Detected
+2026-11-12 13:55:11 - Vehicle Detected
+
+SUMMARY
+==============================
+Total Events: 3
