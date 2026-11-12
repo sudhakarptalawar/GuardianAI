@@ -21,7 +21,7 @@ for result in results:
 
         if obj == "person":
             events.add(
-                f"{timestamp} - Person Detected"
+                f"{timestamp} - [MEDIUM] Person Detected"
             )
 
         elif obj == "dog":
@@ -47,6 +47,14 @@ print(f"Total Events: {len(events)}")
 
 # Save Report
 with open("report.txt", "w") as file:
+    with open("alerts.txt", "w") as file:
+
+    for event in events:
+
+        if "[HIGH]" in event:
+            file.write(event + "\n")
+
+    print("Critical alerts saved as alerts.txt")
 
     file.write("GUARDIANAI REPORT\n")
     file.write("=" * 30 + "\n")
