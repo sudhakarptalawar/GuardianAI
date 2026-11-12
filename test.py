@@ -1,10 +1,13 @@
-from datetime import datetime
 from ultralytics import YOLO
+from datetime import datetime
 
+# Load YOLO model
 model = YOLO("yolov8n.pt")
 
+# Analyze image
 results = model("images/test.jpg")
 
+# Store detected events
 events = set()
 
 for result in results:
@@ -12,25 +15,26 @@ for result in results:
     for box in result.boxes:
 
         cls = int(box.cls[0])
-
         obj = result.names[cls]
+
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         if obj == "person":
             events.add(
-    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Person Detected"
-)
-
+                f"{timestamp} - Person Detected"
+            )
 
         elif obj == "dog":
             events.add(
-    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Dog Detected"
-)
+                f"{timestamp} - Dog Detected"
+            )
 
         elif obj == "car":
             events.add(
-    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Vehicle Detected"
-)
+                f"{timestamp} - Vehicle Detected"
+            )
 
+# Print Report
 print("\nGUARDIANAI REPORT\n")
 print("=" * 30)
 
@@ -40,6 +44,8 @@ for event in events:
 print("\nSUMMARY")
 print("=" * 30)
 print(f"Total Events: {len(events)}")
+
+# Save Report
 with open("report.txt", "w") as file:
 
     file.write("GUARDIANAI REPORT\n")
