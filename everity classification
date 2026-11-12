@@ -1,0 +1,28 @@
+[1mdiff --git a/test.py b/test.py[m
+[1mindex f694fe2..b57bce8 100644[m
+[1m--- a/test.py[m
+[1m+++ b/test.py[m
+[36m@@ -21,7 +21,7 @@[m [mfor result in results:[m
+ [m
+         if obj == "person":[m
+             events.add([m
+[31m-                f"{timestamp} - Person Detected"[m
+[32m+[m[32m                f"{timestamp} - [MEDIUM] Person Detected"[m
+             )[m
+ [m
+         elif obj == "dog":[m
+[36m@@ -47,6 +47,14 @@[m [mprint(f"Total Events: {len(events)}")[m
+ [m
+ # Save Report[m
+ with open("report.txt", "w") as file:[m
+[32m+[m[32m    with open("alerts.txt", "w") as file:[m
+[32m+[m
+[32m+[m[32m    for event in events:[m
+[32m+[m
+[32m+[m[32m        if "[HIGH]" in event:[m
+[32m+[m[32m            file.write(event + "\n")[m
+[32m+[m
+[32m+[m[32m    print("Critical alerts saved as alerts.txt")[m
+ [m
+     file.write("GUARDIANAI REPORT\n")[m
+     file.write("=" * 30 + "\n")[m

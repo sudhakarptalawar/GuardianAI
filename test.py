@@ -1,14 +1,21 @@
 from ultralytics import YOLO
 from datetime import datetime
+import os
+
+os.makedirs("reports", exist_ok=True)
 
 # Load YOLO model
 model = YOLO("yolov8n.pt")
 
-# Analyze image
-results = model("images/test.jpg")
+results = model("videos/fire/fire.mp4")
+
 
 # Store detected events
 events = set()
+person_count = 0
+vehicle_count = 0
+animal_count = 0
+fire_detected = False
 
 for result in results:
 
@@ -23,6 +30,9 @@ for result in results:
         current_hour = datetime.now().hour
 
         if obj == "person":
+            if person_count > 0:
+                fire_detected = True
+            person_count += 1
 
             if current_hour >= 22 or current_hour <= 5:
                 events.add(
@@ -40,12 +50,14 @@ for result in results:
         
 
         elif obj == "dog":
+            animal_count += 1
 
             events.add(
                 f"{timestamp} - [LOW] Dog Detected"
             )
 
         elif obj == "car":
+            vehicle_count += 1
 
             events.add(
                 f"{timestamp} - [MEDIUM] Vehicle Detected"
@@ -63,7 +75,10 @@ print("=" * 30)
 print(f"Total Events: {len(events)}")
 
 # Save Report
-with open("report.txt", "w") as file:
+with open(
+    f"reports/report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+    "w"
+) as file:
 
     file.write("GUARDIANAI REPORT\n")
     file.write("=" * 30 + "\n")
@@ -75,5 +90,15 @@ with open("report.txt", "w") as file:
     file.write("=" * 30 + "\n")
 
     file.write(f"Total Events: {len(events)}")
+    print("\nINCIDENT SUMMARY")
+    print("\nALERTS")
+print("=" * 30)
 
+if fire_detected:
+    print("[CRITICAL] FIRE DETECTED")
+    print("=" * 30)
+
+    print(f"Person Detections: {person_count}")
+    print(f"Vehicle Detections: {vehicle_count}")
+    print(f"Animal Detections: {animal_count}")
 print("\nReport saved as report.txt")

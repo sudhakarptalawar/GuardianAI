@@ -1,0 +1,9 @@
+GUARDIANAI REPORT
+==============================
+2026-11-12 15:53:15 - [LOW] Dog Detected
+2026-11-12 15:53:15 - [MEDIUM] Vehicle Detected
+2026-11-12 15:53:15 - [MEDIUM] Person Detected
+
+SUMMARY
+==============================
+Total Events: 3
