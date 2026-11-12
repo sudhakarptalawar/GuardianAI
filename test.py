@@ -17,25 +17,39 @@ for result in results:
         cls = int(box.cls[0])
         obj = result.names[cls]
 
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(obj)
 
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         current_hour = datetime.now().hour
 
-current_hour = datetime.now().hour
+        if obj == "person":
 
-if obj == "person":
+            if current_hour >= 22 or current_hour <= 5:
+                events.add(
+                            f"{timestamp} - [HIGH] Potential Intruder Detected"
+                        )
 
-    if current_hour >= 22 or current_hour <= 5:
 
-        events.add(
-            f"{timestamp} - [HIGH] Potential Intruder Detected"
-        )
+        
 
-    else:
+            else:
+                events.add(
+                            f"{timestamp} - [MEDIUM] Person Detected"
+                        )
 
-        events.add(
-            f"{timestamp} - [MEDIUM] Person Detected"
-        )
+        
+
+        elif obj == "dog":
+
+            events.add(
+                f"{timestamp} - [LOW] Dog Detected"
+            )
+
+        elif obj == "car":
+
+            events.add(
+                f"{timestamp} - [MEDIUM] Vehicle Detected"
+            )
 
 # Print Report
 print("\nGUARDIANAI REPORT\n")
@@ -50,14 +64,6 @@ print(f"Total Events: {len(events)}")
 
 # Save Report
 with open("report.txt", "w") as file:
-    with open("alerts.txt", "w") as file:
-
-    for event in events:
-
-        if "[HIGH]" in event:
-            file.write(event + "\n")
-
-    print("Critical alerts saved as alerts.txt")
 
     file.write("GUARDIANAI REPORT\n")
     file.write("=" * 30 + "\n")
