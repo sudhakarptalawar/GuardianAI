@@ -19,20 +19,23 @@ for result in results:
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        if obj == "person":
-            events.add(
-                f"{timestamp} - [MEDIUM] Person Detected"
-            )
+        current_hour = datetime.now().hour
 
-        elif obj == "dog":
-            events.add(
-                f"{timestamp} - Dog Detected"
-            )
+current_hour = datetime.now().hour
 
-        elif obj == "car":
-            events.add(
-                f"{timestamp} - Vehicle Detected"
-            )
+if obj == "person":
+
+    if current_hour >= 22 or current_hour <= 5:
+
+        events.add(
+            f"{timestamp} - [HIGH] Potential Intruder Detected"
+        )
+
+    else:
+
+        events.add(
+            f"{timestamp} - [MEDIUM] Person Detected"
+        )
 
 # Print Report
 print("\nGUARDIANAI REPORT\n")
