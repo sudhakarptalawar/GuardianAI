@@ -13,3 +13,6 @@ runs/
 __pycache__/
 *.pt
 report.txt
+reports/
+alerts.txt
+__pycache__/
