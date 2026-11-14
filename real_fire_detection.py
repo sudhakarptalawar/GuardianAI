@@ -1,33 +1,42 @@
 from ultralytics import YOLO
 
-# Fire model (will add later)
 model = YOLO("models/fire.pt")
 
 results = model("videos/fire/fire.mp4")
 
-fire_found = False
+events = set()
 
 for result in results:
 
     for box in result.boxes:
 
         cls = int(box.cls[0])
+
         obj = result.names[cls]
 
         print(obj)
 
-        if obj.lower() in ["fire", "smoke"]:
+        if obj.lower() == "fire":
 
-            fire_found = True
+            events.add(
+                "[CRITICAL] FIRE DETECTED"
+            )
+
+        elif obj.lower() == "smoke":
+
+            events.add(
+                "[HIGH] SMOKE DETECTED"
+            )
+
 
 print("\nFIRE REPORT")
 print("=" * 30)
 
-if fire_found:
+if events:
 
-    print("[CRITICAL] FIRE DETECTED")
+    for event in events:
+        print(event)
 
 else:
 
-    print("No fire detected")
-    
+    print("No fire or smoke detected")
