@@ -1,18 +1,54 @@
-.venv/
+# GuardianAI .gitignore
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Reports & generated output
+reports/*.txt
+reports/*.json
+reports/*.pdf
+alerts.txt
+
+# YOLO run artifacts
 runs/
 
-*.pt
+# Models (large binary files — store via Git LFS or separately)
+# models/*.pt          # uncomment if you do NOT want to track model weights
+yolov8n.pt
+
+# Media (large files)
+videos/
+images/
 *.mp4
 *.avi
-Pictures/
-videos/
-runs/
-.venv/
-__pycache__/
-*.pt
-report.txt
-reports/
-alerts.txt
-__pycache__/
+*.mov
+*.jpg
+*.jpeg
+*.png
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Misc
+*.log
+*.tmp
+everity classification?

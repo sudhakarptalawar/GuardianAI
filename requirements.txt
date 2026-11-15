@@ -1,0 +1,22 @@
+ultralytics>=8.0.0
+opencv-python>=4.8.0
+torch>=2.0.0
+torchvision>=0.15.0
+Pillow>=10.0.0
+numpy>=1.24.0
+
+# API (Week 1)
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+websockets>=12.0
+pydantic>=2.0.0
+
+# Alerts (Week 3)
+# twilio>=9.0.0        # SMS alerts — uncomment in Week 3
+# sendgrid>=6.11.0     # Email alerts — uncomment in Week 3
+
+# Audio Intelligence (Week 3)
+# openai-whisper       # audio transcription — uncomment in Week 3
+
+# Database (Week 2)
+# pymongo>=4.6.0       # MongoDB — uncomment in Week 2
