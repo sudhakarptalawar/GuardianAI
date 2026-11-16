@@ -22,12 +22,16 @@ from detectors.person   import PersonDetector
 from detectors.fire     import FireDetector
 from detectors.snake    import SnakeDetector
 from detectors.objects  import ObjectDetector
+from detectors.face     import FaceDetector
+from detectors.perimeter import PerimeterDetector
 
 DETECTOR_MAP = {
-    "person": PersonDetector,
-    "fire":   FireDetector,
-    "snake":  SnakeDetector,
-    "object": ObjectDetector,
+    "person":    PersonDetector,
+    "fire":      FireDetector,
+    "snake":     SnakeDetector,
+    "object":    ObjectDetector,
+    "face":      FaceDetector,
+    "perimeter": PerimeterDetector,
 }
 
 
@@ -41,7 +45,7 @@ def parse_args():
     p.add_argument(
         "--detectors",
         nargs="+",
-        default=["person", "fire", "snake", "object"],
+        default=["person", "fire", "snake", "object", "face", "perimeter"],
         choices=list(DETECTOR_MAP.keys()),
         help="Detectors to enable (default: all)",
     )

@@ -125,6 +125,28 @@ def assess(obj: str, confidence: float = 1.0, context: dict | None = None) -> Th
             timestamp   = now,
         )
 
+    # ── Face & Covered Face ──────────────────────────────────────────────────
+    if obj_lower == "covered_face":
+        return ThreatAssessment(
+            category    = EventCategory.COVERED_FACE,
+            severity    = Severity.HIGH,
+            label       = "[HIGH] Concealed / Covered Face Detected",
+            confidence  = confidence,
+            description = "Individual with concealed face detected near camera.",
+            timestamp   = now,
+        )
+
+    if obj_lower == "face":
+        face_count = ctx.get("face_count", 1)
+        return ThreatAssessment(
+            category    = EventCategory.PERSON,
+            severity    = Severity.LOW,
+            label       = f"[LOW] Face Detected ({face_count})",
+            confidence  = confidence,
+            description = f"{face_count} face(s) identified in camera view.",
+            timestamp   = now,
+        )
+
     # ── Animals ──────────────────────────────────────────────────────────────
     if obj_lower in ("dog", "cat", "bear", "elephant"):
         return ThreatAssessment(

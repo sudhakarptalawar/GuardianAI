@@ -124,6 +124,26 @@ class EventManager:
         except Exception as ex:
             print(f"[EventManager] Warning: could not save events — {ex}")
 
+        # Also sync to SQLite database
+        try:
+            from core.database import get_db, EventRecord
+            db = get_db()
+            if self.events:
+                latest = self.events[-1]
+                db.insert_event(EventRecord(
+                    id=latest.id,
+                    timestamp=latest.timestamp,
+                    camera_id=latest.camera_id,
+                    category=latest.category,
+                    severity=latest.severity,
+                    label=latest.label,
+                    description=latest.description,
+                    confidence=latest.confidence,
+                    clip_path=latest.clip_path,
+                ))
+        except Exception as ex:
+            pass
+
     def _load(self) -> None:
         if not os.path.exists(self.events_file):
             return

@@ -11,6 +11,8 @@ from typing import List, Callable
 from core.camera       import Camera, CameraConfig
 from core.severity     import ThreatAssessment
 from core.event_manager import EventManager, Event
+from core.clip_manager import ClipManager
+from core.alert_manager import AlertManager
 
 
 # Type alias: a detector is any callable that takes a frame and returns a list of assessments
@@ -46,6 +48,8 @@ class Pipeline:
         self.fps_target     = fps_target
         self.detectors: List[DetectorFn] = []
         self.event_manager  = event_manager or EventManager()
+        self.clip_manager   = ClipManager()
+        self.alert_manager  = AlertManager()
         self.on_event       = on_event      # optional callback (e.g. send alert)
         self._running       = False
 
@@ -91,6 +95,7 @@ class Pipeline:
                 if duration and (time.time() - start_time) > duration:
                     break
 
+                self.clip_manager.push(frame, fps=cam.status.fps)
                 annotated = frame.copy()
                 all_events: List[Event] = []
 
@@ -104,6 +109,11 @@ class Pipeline:
                             )
                             if event:
                                 all_events.append(event)
+                                if event.severity in ("HIGH", "CRITICAL"):
+                                    clip_path = self.clip_manager.save(event.id, label=event.label)
+                                    if clip_path:
+                                        event.clip_path = clip_path
+                                    self.alert_manager.send(event)
                                 if self.on_event:
                                     self.on_event(event)
                     except Exception as ex:

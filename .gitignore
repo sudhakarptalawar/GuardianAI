@@ -20,13 +20,16 @@ env/
 reports/*.txt
 reports/*.json
 reports/*.pdf
+reports/*.db*
+reports/clips/
+report.txt
 alerts.txt
 
 # YOLO run artifacts
 runs/
 
 # Models (large binary files — store via Git LFS or separately)
-# models/*.pt          # uncomment if you do NOT want to track model weights
+models/*.pt
 yolov8n.pt
 
 # Media (large files)
