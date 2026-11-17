@@ -7,17 +7,23 @@ import csv
 import io
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import cv2
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from core.event_manager import EventManager
 from core.clip_manager import ClipManager
 from core.alert_manager import AlertManager
+from core.auth import (
+    ensure_users_table, create_user, authenticate_user,
+    get_user_by_id, update_user, change_password,
+    create_token, decode_token
+)
 from detectors.fire import FireDetector
 from detectors.objects import ObjectDetector
 from detectors.person import PersonDetector
@@ -262,6 +268,101 @@ class CameraRuntime:
 
 runtime = CameraRuntime()
 app = FastAPI(title="GuardianAI Local Dashboard", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Ensure users table exists on startup
+ensure_users_table()
+
+
+# ── Auth helpers ─────────────────────────────────────────────────────────────
+
+def _safe_user(user: dict) -> dict:
+    """Strip password before returning user data to client."""
+    return {k: v for k, v in user.items() if k != "password"}
+
+def _require_auth(authorization: Optional[str]) -> dict:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "Not authenticated")
+    payload = decode_token(authorization[7:])
+    if not payload:
+        raise HTTPException(401, "Invalid or expired token")
+    user = get_user_by_id(int(payload["sub"]))
+    if not user:
+        raise HTTPException(401, "User not found")
+    return user
+
+
+# ── Auth request models ───────────────────────────────────────────────────────
+
+class RegisterRequest(BaseModel):
+    name:       str
+    email:      str
+    password:   str
+    org:        str = ""
+    role:       str = "operator"
+    avatar_col: str = "#4ce0c0"
+
+class LoginRequest(BaseModel):
+    email:    str
+    password: str
+
+class UpdateProfileRequest(BaseModel):
+    name:       Optional[str] = None
+    org:        Optional[str] = None
+    avatar_col: Optional[str] = None
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password:     str
+
+
+# ── Auth endpoints ────────────────────────────────────────────────────────────
+
+@app.post("/api/auth/register")
+def register(req: RegisterRequest):
+    if len(req.password) < 6:
+        raise HTTPException(400, "Password must be at least 6 characters")
+    user = create_user(
+        name=req.name, email=req.email, password=req.password,
+        role=req.role, org=req.org, avatar_col=req.avatar_col,
+    )
+    if not user:
+        raise HTTPException(409, "Email already registered")
+    token = create_token(user["id"], user["email"], user["role"])
+    return {"token": token, "user": _safe_user(user)}
+
+@app.post("/api/auth/login")
+def login(req: LoginRequest):
+    user = authenticate_user(req.email, req.password)
+    if not user:
+        raise HTTPException(401, "Invalid email or password")
+    token = create_token(user["id"], user["email"], user["role"])
+    return {"token": token, "user": _safe_user(user)}
+
+@app.get("/api/auth/me")
+def me(authorization: Optional[str] = Header(None)):
+    user = _require_auth(authorization)
+    return _safe_user(user)
+
+@app.patch("/api/auth/profile")
+def update_profile(req: UpdateProfileRequest, authorization: Optional[str] = Header(None)):
+    user = _require_auth(authorization)
+    updated = update_user(user["id"], req.dict(exclude_none=True))
+    return _safe_user(updated)
+
+@app.post("/api/auth/change-password")
+def change_pw(req: ChangePasswordRequest, authorization: Optional[str] = Header(None)):
+    user = _require_auth(authorization)
+    if not __import__("core.auth", fromlist=["verify_password"]).verify_password(req.current_password, user["password"]):
+        raise HTTPException(400, "Current password is incorrect")
+    change_password(user["id"], req.new_password)
+    return {"ok": True}
 
 
 @app.get("/api/status")

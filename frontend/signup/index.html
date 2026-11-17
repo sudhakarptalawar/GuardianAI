@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GuardianAI · Create Account</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0b1220;--panel:#111c2c;--line:#2a3c54;--text:#f0f5fb;--muted:#91a2b8;
+    --soft:#c2cfdd;--teal:#4ce0c0;--blue:#75b2ff;--red:#ff6b7a;--input:#14243a;
+  }
+  body{background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 16px}
+  button,input,select{font:inherit}button{cursor:pointer}a{color:var(--teal);text-decoration:none}a:hover{text-decoration:underline}
+
+  .card{width:100%;max-width:500px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:44px 44px 36px;box-shadow:0 24px 64px rgba(0,0,0,.4)}
+
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+  .brand img{width:36px;height:38px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(76,224,192,.5))}
+  .brand strong{font-size:15px}
+  .brand small{display:block;font-size:8px;font-weight:800;letter-spacing:1.4px;color:var(--teal)}
+
+  .form-eyebrow{font-size:9px;font-weight:800;letter-spacing:1.4px;color:var(--teal);margin-bottom:6px}
+  .form-title{font-size:24px;font-weight:800;letter-spacing:-.5px}
+  .form-sub{font-size:12px;color:var(--muted);margin-top:5px;margin-bottom:28px}
+
+  .fields{display:flex;flex-direction:column;gap:14px}
+  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  .field-label{font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--soft);margin-bottom:5px;display:block}
+  .field-wrap{position:relative}
+  .field-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted);pointer-events:none}
+  .field-input,.field-select{
+    width:100%;height:44px;border-radius:10px;border:1px solid var(--line);
+    background:var(--input);color:var(--text);padding:0 13px 0 38px;
+    font-size:13px;outline:none;transition:.2s;
+  }
+  .field-select{padding-left:38px;cursor:pointer;appearance:none}
+  .field-input:focus,.field-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(76,224,192,.12)}
+  .field-input::placeholder{color:var(--muted)}
+  .no-icon .field-input{padding-left:13px}
+
+  /* Avatar picker */
+  .avatar-row{display:flex;align-items:center;gap:14px}
+  .avatar-preview{
+    width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+    font-size:18px;font-weight:800;color:#fff;flex-shrink:0;
+    background:linear-gradient(145deg,#19c4ac,#4a86f5);
+    border:2px solid var(--line);transition:.3s;
+  }
+  .color-swatches{display:flex;gap:7px;flex-wrap:wrap}
+  .swatch{
+    width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+    transition:.15s;flex-shrink:0;
+  }
+  .swatch:hover,.swatch.active{border-color:#fff;transform:scale(1.15)}
+
+  /* Password strength */
+  .strength-bar{height:3px;border-radius:3px;background:var(--line);margin-top:6px;overflow:hidden}
+  .strength-fill{height:100%;border-radius:3px;width:0;transition:.3s}
+
+  .terms-row{display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--muted);cursor:pointer}
+  .terms-row input{accent-color:var(--teal);margin-top:2px;flex-shrink:0}
+
+  .btn-primary{
+    height:46px;border-radius:12px;border:none;width:100%;margin-top:6px;
+    background:linear-gradient(100deg,#19c4ac,#4a86f5 60%,#8060dc);
+    color:#fff;font-size:14px;font-weight:700;letter-spacing:.2px;
+    box-shadow:0 8px 24px rgba(74,134,245,.28);transition:.2s;
+  }
+  .btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+  .btn-spinner{display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin:auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .login-row{text-align:center;font-size:12px;color:var(--muted);margin-top:16px}
+  .error-box{display:none;padding:10px 13px;border-radius:9px;background:rgba(255,107,122,.1);border:1px solid rgba(255,107,122,.3);color:var(--red);font-size:12px;margin-bottom:4px}
+
+  @media(max-width:500px){.card{padding:32px 22px}.row-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">
+    <img src="/assets/guardianai-mark.png" alt="">
+    <div><strong>GuardianAI</strong><small>A SAFER TOMORROW</small></div>
+  </div>
+
+  <p class="form-eyebrow">CREATE ACCOUNT</p>
+  <h2 class="form-title">Get started.</h2>
+  <p class="form-sub">Set up your GuardianAI security console.</p>
+
+  <div class="fields">
+    <div class="error-box" id="error-box"></div>
+
+    <div class="row-2">
+      <div>
+        <label class="field-label">FULL NAME</label>
+        <div class="field-wrap">
+          <span class="field-icon">👤</span>
+          <input class="field-input" id="name" type="text" placeholder="Your name">
+        </div>
+      </div>
+      <div>
+        <label class="field-label">ORGANIZATION</label>
+        <div class="field-wrap no-icon">
+          <input class="field-input" id="org" type="text" placeholder="Company / site (optional)" style="padding-left:13px">
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="field-label">EMAIL ADDRESS</label>
+      <div class="field-wrap">
+        <span class="field-icon">✉</span>
+        <input class="field-input" id="email" type="email" placeholder="you@example.com">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label class="field-label">PASSWORD</label>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input class="field-input" id="password" type="password" placeholder="Min. 6 characters">
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+      </div>
+      <div>
+        <label class="field-label">ROLE</label>
+        <div class="field-wrap">
+          <span class="field-icon">🛡</span>
+          <select class="field-select" id="role">
+            <option value="operator">Operator</option>
+            <option value="admin">Administrator</option>
+            <option value="viewer">Viewer (read-only)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="field-label">AVATAR COLOR</label>
+      <div class="avatar-row">
+        <div class="avatar-preview" id="avatar-preview">?</div>
+        <div class="color-swatches" id="color-swatches">
+          <div class="swatch active" data-color="#4ce0c0" style="background:#4ce0c0"></div>
+          <div class="swatch" data-color="#75b2ff" style="background:#75b2ff"></div>
+          <div class="swatch" data-color="#b7a0ff" style="background:#b7a0ff"></div>
+          <div class="swatch" data-color="#ffc06d" style="background:#ffc06d"></div>
+          <div class="swatch" data-color="#ff6b7a" style="background:#ff6b7a"></div>
+          <div class="swatch" data-color="#5de89e" style="background:#5de89e"></div>
+          <div class="swatch" data-color="#f97ed4" style="background:#f97ed4"></div>
+          <div class="swatch" data-color="#ff9472" style="background:#ff9472"></div>
+        </div>
+      </div>
+    </div>
+
+    <label class="terms-row">
+      <input type="checkbox" id="terms">
+      I agree that all camera data stays local on this machine and I am authorized to operate this security system.
+    </label>
+
+    <button class="btn-primary" id="signup-btn" type="button">
+      <span id="btn-text">Create account →</span>
+      <div class="btn-spinner" id="btn-spinner"></div>
+    </button>
+  </div>
+  <div class="login-row">Already have an account? <a href="/login/">Sign in</a></div>
+</div>
+
+<script>
+let selectedColor = '#4ce0c0';
+
+// Avatar color picker
+document.getElementById('color-swatches').addEventListener('click', e => {
+  const sw = e.target.closest('.swatch');
+  if (!sw) return;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  sw.classList.add('active');
+  selectedColor = sw.dataset.color;
+  updateAvatar();
+});
+
+// Live avatar preview
+document.getElementById('name').addEventListener('input', updateAvatar);
+function updateAvatar() {
+  const name = document.getElementById('name').value.trim();
+  const el   = document.getElementById('avatar-preview');
+  el.textContent = name ? name[0].toUpperCase() : '?';
+  el.style.background = `linear-gradient(145deg, ${selectedColor}, ${shiftColor(selectedColor)})`;
+}
+function shiftColor(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, (n >> 16) + 60);
+  const g = Math.max(0, ((n >> 8) & 0xff) - 20);
+  const b = Math.min(255, (n & 0xff) + 80);
+  return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+}
+
+// Password strength
+document.getElementById('password').addEventListener('input', e => {
+  const v = e.target.value;
+  const fill = document.getElementById('strength-fill');
+  let score = 0;
+  if (v.length >= 6)  score++;
+  if (v.length >= 10) score++;
+  if (/[A-Z]/.test(v)) score++;
+  if (/[0-9]/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  const colors = ['#ff6b7a','#ffc06d','#ffc06d','#4ce0c0','#4ce0c0'];
+  fill.style.width  = `${score * 20}%`;
+  fill.style.background = colors[score - 1] || 'transparent';
+});
+
+// Submit
+document.getElementById('signup-btn').addEventListener('click', doSignup);
+['name','email','password'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doSignup(); });
+});
+
+function showError(msg) {
+  const b = document.getElementById('error-box');
+  b.textContent = msg; b.style.display = 'block';
+}
+function setLoading(on) {
+  document.getElementById('btn-text').style.display  = on ? 'none' : 'block';
+  document.getElementById('btn-spinner').style.display = on ? 'block' : 'none';
+  document.getElementById('signup-btn').disabled = on;
+}
+
+async function doSignup() {
+  const name     = document.getElementById('name').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const org      = document.getElementById('org').value.trim();
+  const role     = document.getElementById('role').value;
+  const terms    = document.getElementById('terms').checked;
+
+  document.getElementById('error-box').style.display = 'none';
+  if (!name || !email || !password) { showError('Please fill in all required fields.'); return; }
+  if (password.length < 6)          { showError('Password must be at least 6 characters.'); return; }
+  if (!terms)                        { showError('Please agree to the terms to continue.'); return; }
+
+  setLoading(true);
+  try {
+    const res  = await fetch('/api/auth/register', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ name, email, password, org, role, avatar_col: selectedColor }),
+    });
+    const data = await res.json();
+    if (!res.ok) { showError(data.detail || 'Registration failed.'); return; }
+    localStorage.setItem('guardian_token', data.token);
+    localStorage.setItem('guardian_user', JSON.stringify(data.user));
+    window.location.href = '/';
+  } catch (e) {
+    showError('Could not connect to GuardianAI server.');
+  } finally {
+    setLoading(false);
+  }
+}
+
+// Redirect if already logged in
+if (localStorage.getItem('guardian_token') || sessionStorage.getItem('guardian_token'))
+  window.location.href = '/';
+</script>
+</body>
+</html>
